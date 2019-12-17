@@ -30,9 +30,10 @@ class Game:
         is_game_over = False
         direction = 0
 
-        player_character = PlayerCharacter('ironman.png', 275, 550, 150, 150)
+        player_character = PlayerCharacter('ironman.png', 260, 520, 80, 80)
+        enemy_0 = EnemyCharacter('thanos.png', 20, 400, 50, 50)
 
-        # Main game loop, used to update all gameplay such as movement, checks, and graphics
+        # Mai sn game loop, used to update all gameplay such as movement, checks, and graphics
         # Runs until is_game_over = True
         while not is_game_over:
 
@@ -62,8 +63,12 @@ class Game:
                 print(event)
 
             self.game_screen.fill(WHITE_COLOR)
-            player_character.move(direction)
+            
+            player_character.move(direction, self.height)
             player_character.draw(self.game_screen)
+
+            enemy_0.move(self.width)
+            enemy_0.draw(self.game_screen)
                 
             # Update all game graphics        
             pygame.display.update()
@@ -97,12 +102,34 @@ class PlayerCharacter(GameObject):
         super().__init__(image_path, x, y, width, height)
 
     # Move function move character up if direction > 0 and down if < 0
-    def move(self, direction):
+    def move(self, direction, max_height):
         if direction > 0:
             self.y_pos -= self.SPEED
         elif direction < 0:
             self.y_pos += self.SPEED
 
+        if self.y_pos >= max_height - 100:
+            self.y_pos = max_height - 100
+
+# Class to represent the enemy
+class EnemyCharacter(GameObject):
+
+    # How many tiles the character moves per second
+    SPEED = 10
+    
+    def __init__(self, image_path, x, y, width, height):
+        super().__init__(image_path, x, y, width, height)
+
+    # Move function will move 
+    def move(self, max_width):
+        if self.x_pos <= 20:
+            self.SPEED = abs(self.SPEED)
+        elif self.x_pos >= max_width - 20:
+            self.SPEED = -abs(self.SPEED)
+
+        self.x_pos += self.SPEED
+
+            
 pygame.init()
 
 new_game = Game(SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
