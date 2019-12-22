@@ -32,6 +32,7 @@ class Game:
 
         player_character = PlayerCharacter('ironman.png', 260, 520, 80, 80)
         enemy_0 = EnemyCharacter('thanos.png', 20, 400, 50, 50)
+        treasure = GameObject('treasure.png', 260, 50, 80, 80)
 
         # Mai sn game loop, used to update all gameplay such as movement, checks, and graphics
         # Runs until is_game_over = True
@@ -62,13 +63,24 @@ class Game:
                     
                 print(event)
 
+            # redraw screen to be blacnk white window
             self.game_screen.fill(WHITE_COLOR)
-            
+
+            # draw the treasure
+            treasure.draw(self.game_screen)
+
+           # draw the player (Ironman)         
             player_character.move(direction, self.height)
             player_character.draw(self.game_screen)
 
+            # draw the enemy (Thanos)
             enemy_0.move(self.width)
             enemy_0.draw(self.game_screen)
+
+            if player_character.detect_collision(enemy_0):
+                is_game_over = True
+            elif player_character.detect_collision(treasure):
+                is_game_over = True
                 
             # Update all game graphics        
             pygame.display.update()
@@ -108,8 +120,23 @@ class PlayerCharacter(GameObject):
         elif direction < 0:
             self.y_pos += self.SPEED
 
-        if self.y_pos >= max_height - 100:
-            self.y_pos = max_height - 100
+        if self.y_pos >= max_height - 80:
+            self.y_pos = max_height - 80
+
+    # Return False (no collision) if y positions and x positions do not overlap.
+    # Return True if x and positions of player and other_body overlap
+    def detect_collision(self, other_body):
+        if self.y_pos > other_body.y_pos + other_body.height:
+            return False
+        elif self.y_pos + self.height < other_body.y_pos:
+            return False
+
+        if self.x_pos > other_body.x_pos + other_body.width:
+            return False
+        elif self.x_pos +self.width < other_body.x_pos:
+            return False
+
+        return True
 
 # Class to represent the enemy
 class EnemyCharacter(GameObject):
