@@ -206,9 +206,3 @@ new_game.run_game_loop(1)
 #Quit pygame and the program
 pygame.quit()
 quit()
-
-
-#pygame.draw.rect(game_screen,BLACK_COLOR, [350, 350, 100, 100])
-#pygame.draw.circle(game_screen, BLACK_COLOR, (400, 300), 50)
-
-#game_screen.blit(player_image, (375,375))
