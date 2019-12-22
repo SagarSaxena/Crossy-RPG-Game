@@ -8,6 +8,8 @@ SCREEN_HEIGHT = 600
 WHITE_COLOR = (255, 255, 255) 
 BLACK_COLOR = (0, 0, 0)
 clock = pygame.time.Clock()
+pygame.font.init()
+font = pygame.font.SysFont('comicsans', 75)
 
 class Game:
     
@@ -15,7 +17,7 @@ class Game:
     is_game_over = False
 
     # initializer for game class to set up width, height and title
-    def __init__(self, title, width, height):
+    def __init__(self, image_path, title, width, height):
         self.title = title
         self.width = width
         self.height = height
@@ -26,15 +28,19 @@ class Game:
         self.game_screen.fill(WHITE_COLOR)
         pygame.display.set_caption(title)
 
+        background_image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(background_image, (width, height))
+
     def run_game_loop(self):
         is_game_over = False
+        did_win = False
         direction = 0
 
-        player_character = PlayerCharacter('ironman.png', 260, 520, 80, 80)
+        player_character = PlayerCharacter('ironman.png', 275, 540, 30, 60)
         enemy_0 = EnemyCharacter('thanos.png', 20, 400, 50, 50)
-        treasure = GameObject('treasure.png', 260, 50, 80, 80)
+        treasure = GameObject('infinitygems.png', 225, 10, 150, 50)
 
-        # Mai sn game loop, used to update all gameplay such as movement, checks, and graphics
+        # Main game loop, used to update all gameplay such as movement, checks, and graphics
         # Runs until is_game_over = True
         while not is_game_over:
 
@@ -65,6 +71,7 @@ class Game:
 
             # redraw screen to be blacnk white window
             self.game_screen.fill(WHITE_COLOR)
+            self.game_screen.blit(self.image, (0,0))
 
             # draw the treasure
             treasure.draw(self.game_screen)
@@ -79,13 +86,31 @@ class Game:
 
             if player_character.detect_collision(enemy_0):
                 is_game_over = True
+                did_win = False
+                text = font.render('You lose! :(',True, BLACK_COLOR)
+                self.game_screen.blit(text,(180, 300))
+                pygame.display.update()
+                clock.tick(1)
+                break
+            
             elif player_character.detect_collision(treasure):
                 is_game_over = True
+                did_win = True
+                text = font.render('You win! :)',True, BLACK_COLOR)
+                self.game_screen.blit(text,(180, 300))
+                pygame.display.update()
+                clock.tick(1)
+                break
                 
             # Update all game graphics        
             pygame.display.update()
             # Tick the clock to update eveything within the game
             clock.tick(self.TICK_RATE)
+
+        if did_win:
+            self.run_game_loop()
+        else:
+            return
 
 class GameObject:
     
@@ -120,8 +145,8 @@ class PlayerCharacter(GameObject):
         elif direction < 0:
             self.y_pos += self.SPEED
 
-        if self.y_pos >= max_height - 80:
-            self.y_pos = max_height - 80
+        if self.y_pos >= max_height - 60:
+            self.y_pos = max_height - 60
 
     # Return False (no collision) if y positions and x positions do not overlap.
     # Return True if x and positions of player and other_body overlap
@@ -142,7 +167,7 @@ class PlayerCharacter(GameObject):
 class EnemyCharacter(GameObject):
 
     # How many tiles the character moves per second
-    SPEED = 10
+    SPEED = 5
     
     def __init__(self, image_path, x, y, width, height):
         super().__init__(image_path, x, y, width, height)
@@ -159,7 +184,7 @@ class EnemyCharacter(GameObject):
             
 pygame.init()
 
-new_game = Game(SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
+new_game = Game('background.png', SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
 new_game.run_game_loop()
 
 #Quit pygame and the program
