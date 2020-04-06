@@ -1,5 +1,5 @@
 # Crossy-RPG-Game
-A simple game using pygame to learn the basics of python: variables, collections, control flow, functions, and classes
+A simple game using pygame to learn the basics of python: variables, collections, control flow, functions, and classes. Part of the online course [Learn Python 3 by Making a Game](https://stackskills.com/courses/enrolled/529940).
 
 ## Install
 Clone the repo to your machine
